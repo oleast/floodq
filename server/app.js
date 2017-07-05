@@ -12,21 +12,22 @@ const bodyparser = require('body-parser')
 const cookieparser = require('cookie-parser')
 const session = require('express-session')
 const path = require('path')
+const axios = require('axios')
+//const pirateBay = require('thepiratebay')
+const pirateBay = require('pirata')
 
 global.logger = require('winston')
 global.appRoot = path.resolve(__dirname)
+global.piratebay = pirateBay
 
 global.apiRoot = "http://torrentapi.org/pubapi_v2.php"
 global.apiToken = "xxxx"
 
 global.buildApiRequest = (query) => {
-    return (apiRoot + "?mode=search&search_string='" + query + "'&token=" + apiToken)
-}
-
-global.getToken = () => {
-    axios.get(apiRoot + "?get_token=get_token")
+    return axios.get(apiRoot + "?get_token=get_token")
         .then((res) => {
-            console.log(res)
+            console.log("Token: " + res.data.token)
+            return (apiRoot + "?mode=search&search_string='" + query + "'&token=" + res.data.token)
         })
         .catch((err) => {
             console.log(err)

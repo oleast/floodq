@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Container } from 'semantic-ui-react' 
 
 import Header from './Header'
 import Footer from './Footer'
@@ -12,19 +13,15 @@ export default class App extends Component {
         this.state = {
             thing: undefined
         }
-
-        this.skeleFunction =  this.skeleFunction.bind(this)
-    }
-
-    skeleFunction() {
-        
     }
 
     render() {
         return (
             <div>
                 <Header pageName='FloodQ'/>
-                <Body />
+                <Container>
+                    <Body />
+                </Container>
                 <Footer />
             </div>
         )
