@@ -1,0 +1,18 @@
+
+let axios = require('axios')
+
+module.exports = require('express')
+    .Router()
+        .get('/', (req, res) => {
+
+            piratebay.search(req.query.query, { cat:207, page:req.query.page || 0 }, (err, results) => {
+                if (err) {
+                    console.error(err)
+                } else if (results) {
+                    res.json(results)
+                } else {
+                    console.log('Got else')
+                    res.json([])
+                }
+            })
+        })
