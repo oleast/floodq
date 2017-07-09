@@ -27,7 +27,7 @@ global.buildApiRequest = (query) => {
     return axios.get(apiRoot + "?get_token=get_token")
         .then((res) => {
             console.log("Token: " + res.data.token)
-            return (apiRoot + "?mode=search&search_string='" + query + "'&token=" + res.data.token)
+            return (apiRoot + "?mode=search&search_string=" + query + "&token=" + res.data.token)
         })
         .catch((err) => {
             console.log(err)

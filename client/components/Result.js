@@ -15,11 +15,25 @@ export default class Result extends Component {
         return (
             <div>
                 <Segment compact>
-                    <Grid columns={2} verticalAlign='middle'>
-                        <Grid.Column width={15}>
+                    <Grid columns={6} verticalAlign='middle'>
+                        <Grid.Column width={8}>
                             <Header as='h4'>
                                 {this.props.result.filename}
                             </Header>
+                        </Grid.Column>
+                        <Grid.Column width={2}>
+                        </Grid.Column>
+                        <Grid.Column width={2}>
+                            <Button disabled circular size='large'>3.5 GB</Button>
+                        </Grid.Column>
+                        <Grid.Column width={1}>
+                            <Icon name='linkify' fitted circular size='large' />
+                        </Grid.Column>
+                        <Grid.Column width={1}>
+                            <Icon name='linkify' fitted circular size='large' />
+                        </Grid.Column>
+                        <Grid.Column width={1}>
+                            <Icon name='linkify' fitted circular size='large' />
                         </Grid.Column>
                         <Grid.Column width={1}>
                             <a href={this.props.result.download}>
