@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Input, Segment, Button, Icon, Divider, Grid, Select, Dimmer, Loader } from 'semantic-ui-react'
+import { Input, Segment, Button, Icon, Divider, Grid, Select, Dimmer, Loader, Container } from 'semantic-ui-react'
 import axios from 'axios'
 
 import Result from './Result'
@@ -110,14 +110,17 @@ export default class Body extends Component {
                 </Input>
                 <Divider hidden />
                 { this.state.results.length ? 
-                    <Segment.Group>
-                        {this.state.results.map((result) => { return <Result key={result.download} result={result} />})}
-                    </Segment.Group> : undefined
+                    this.state.results.map((result) => { return <Result key={result.download} result={result} />}) : undefined
                 }
                 { this.state.loading ?
-                    <Loader /> : undefined
+                    <Loader active/> : undefined
                 }
-                <Button floated='middle' onClick={this.apiSearch} size='large'>Load More</Button>
+                { this.state.results.length ?
+                    <Container textAlign='center'>
+                        <Divider hidden />
+                        <Button floated='middle' onClick={this.apiSearch} size='large'>Load More</Button>
+                    </Container> : undefined
+                }
             </div>
         )
     }
