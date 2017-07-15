@@ -8,13 +8,10 @@ module.exports = require('express')
             piratebay.search(req.query.query, { cat:207, page:req.query.page || 0 }, (err, results) => {
                 if (err) {
                     console.error(err)
+                    res.json([])
                 } else if (results) {
-                    let fixedResults = JSON.parse(results).map(torrent => ({
-                        filename: torrent.name,
-                        download: torrent.magnet
-                    }))
-                    console.log(JSON.stringify(results))
-                    res.json(fixedResults)
+                    console.log(results)
+                    res.json(results)
                 } else {
                     console.log('Got else')
                     res.json([])

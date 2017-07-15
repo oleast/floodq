@@ -57,6 +57,8 @@ typings/
 # dotenv environment variables file
 .env
 
+*__pycache__
+
 *bundle.js
 dist/
 public/index.html

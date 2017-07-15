@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Divider, Button, Icon, Grid, Header } from 'semantic-ui-react'
+import { Divider, Button, Icon, Grid, Header, Loader } from 'semantic-ui-react'
+import axios from 'axios'
 
 export default class Result extends Component {
 
@@ -7,37 +8,126 @@ export default class Result extends Component {
         super(props)
 
         this.state = {
-            thing: undefined
+            extra: false,
+            extraInfo: {
+                texted_language: '',
+                spoken_language: '',
+                size: '',
+                date: '',
+                files: '',
+                description: ''
+            }
         }
+
+        this.toggleExtra = this.toggleExtra.bind(this)
+        this.getExtra = this.getExtra.bind(this)
+    }
+
+    getExtra () {
+        const string = '/api/tpb/torrent?query=' + this.props.result.info_link
+        axios
+            .get(string)
+            .then((res) => {
+                this.setState({
+                    extraInfo: res.data
+                }, () => {
+                    console.log(this.state.extraInfo)
+                })
+            })
+            .catch((err) => {
+                console.error(err)
+            })
+    }
+
+    toggleExtra () {
+        console.log('Toggle extra: ' + !this.state.extra)
+        this.setState({
+            extra: !this.state.extra
+        }, () => {
+            if (this.state.extra) {
+                this.getExtra()
+            }
+        })
     }
 
     render() {
         return (
             <div>
                 <Divider />
-                <Grid columns={6} verticalAlign='middle'>
-                    <Grid.Column width={8}>
-                        <Header as='h4'>
-                            {this.props.result.filename}
-                        </Header>
-                    </Grid.Column>
-                    <Grid.Column width={2}>
-                    </Grid.Column>
-                    <Grid.Column width={2}>
-                        <Button disabled circular size='large'>3.5 GB</Button>
-                    </Grid.Column>
-                    <Grid.Column width={1}>
-                        <Button disabled basic circular size='large' color='green'>15</Button>
-                    </Grid.Column>
-                    <Grid.Column width={1}>
-                        <Button disabled basic circular size='large' color='red'>10</Button>
-                    </Grid.Column>
-                    <Grid.Column width={1}>
-                        <a href={this.props.result.download}>
-                            <Icon name='linkify' fitted circular size='large' />
-                        </a>
-                    </Grid.Column>
+                <Grid verticalAlign='middle'>
+                    <Grid.Row verticalAlign='middle' only='computer'>
+                        <Grid.Column width={8}>
+                            <Header as='h4'>
+                                { this.props.result.name }
+                            </Header>
+                        </Grid.Column>
+                        <Grid.Column width={1}>
+                        </Grid.Column>
+                        <Grid.Column width={2}>
+                            <Button disabled circular size='large'>{ this.props.result.size }</Button>
+                        </Grid.Column>
+                        <Grid.Column width={2}>
+                            <Button disabled basic circular size='large' color='green'> { this.props.result.seeders } </Button>
+                        </Grid.Column>
+                        <Grid.Column width={1}>
+                            <Button disabled basic circular size='large' color='red'> { this.props.result.leechers } </Button>
+                        </Grid.Column>
+                        <Grid.Column width={1}>
+                            <a href={this.props.result.magnet}>
+                                <Icon name='linkify' fitted circular size='large' />
+                            </a>
+                        </Grid.Column>
+                        <Grid.Column width={1}>
+                            <Icon name='expand' fitted circular size='large' onClick={ this.toggleExtra }/>
+                        </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row columns={1} verticalAlign='middle' only='mobile tablet'>
+                        <Grid.Column width={16}>
+                            <Header as='h4'>
+                                { this.props.result.name }
+                            </Header>
+                        </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row columns={5} verticalAlign='middle' only='mobile tablet'>
+                        <Grid.Column width={5}>
+                            <Button disabled circular size='large'>{ this.props.result.size }</Button>
+                        </Grid.Column>
+                        <Grid.Column width={3}>
+                            <Button disabled basic circular size='large' color='green'> { this.props.result.seeders } </Button>
+                        </Grid.Column>
+                        <Grid.Column width={3}>
+                            <Button disabled basic circular size='large' color='red'> { this.props.result.leechers } </Button>
+                        </Grid.Column>
+                        <Grid.Column width={2}>
+                            <a href={this.props.result.magnet}>
+                                <Icon name='linkify' fitted circular size='large' />
+                            </a>
+                        </Grid.Column>
+                        { this.state.extra ?
+                            <Grid.Column width={2}>
+                                <Icon name='expand' color='blue' fitted circular size='large' onClick={ this.toggleExtra }/>
+                            </Grid.Column> :
+                            <Grid.Column width={2}>
+                                <Icon name='expand' fitted circular size='large' onClick={ this.toggleExtra }/>
+                            </Grid.Column>
+                        }
+                    </Grid.Row>
                 </Grid>
+                { this.state.extra ?
+                    this.state.extraInfo.size ?
+                        <div>
+                            <p>Texted Language: { this.state.extraInfo.texted_language }</p>
+                            <p>Spoken Language: { this.state.extraInfo.spoken_language }</p>
+                            <p>Size (bytes): { this.state.extraInfo.size }</p>
+                            <p>Date: { this.state.extraInfo.date }</p>
+                            <p>User: { this.props.result.user } : { this.props.result.user_status }</p>
+                            <p>{ this.props.description }</p>
+                        </div> :
+                        <div>
+                            <Loader active inline />
+                        </div>
+                    : undefined
+                }
             </div>
         )
     }

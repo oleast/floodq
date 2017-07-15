@@ -24,7 +24,7 @@ export default class Body extends Component {
             query: '',
             loading: false,
             provider: providers[0].value,
-            media: 'movies',
+            media: 'search',
             page: 0
         }
 
@@ -95,7 +95,7 @@ export default class Body extends Component {
         return (
             <div>
                 <Input
-                    placeholder='Search...'
+                    placeholder='Search...B'
                     onChange={this.formChange}
                     size='large'
                     fluid
@@ -110,7 +110,7 @@ export default class Body extends Component {
                 </Input>
                 <Divider hidden />
                 { this.state.results.length ? 
-                    this.state.results.map((result) => { return <Result key={result.download} result={result} />}) : undefined
+                    this.state.results.map((result) => { return <Result key={result.magnet} result={result} />}) : undefined
                 }
                 { this.state.loading ?
                     <Loader active/> : undefined
@@ -118,7 +118,7 @@ export default class Body extends Component {
                 { this.state.results.length ?
                     <Container textAlign='center'>
                         <Divider hidden />
-                        <Button floated='middle' onClick={this.apiSearch} size='large'>Load More</Button>
+                        <Button onClick={this.apiSearch} size='large'>Load More</Button>
                     </Container> : undefined
                 }
             </div>

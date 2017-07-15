@@ -14,7 +14,7 @@ const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
 module.exports = {
   entry: './client/index.js',
   output: {
-    path: path.resolve('public'),
+    path: path.resolve('server-python/templates'),
     filename: 'bundle.js'
   },
   module: {

@@ -1,24 +1,28 @@
 
-let axios = require('axios')
+const axios = require('axios')
+const requestify = require('requestify');
 
 module.exports = require('express')
     .Router()
         .get('/', (req, res) => {
             let requestText = buildApiRequest(req.query.query)
                 .then(a => {
-                    axios.get(a)
-                        .then((b) => {
-                            console.log(a)
-                            let results = b.data.torrent_results
-                            console.log(results)
-                            if (!results) {
-                                res.json([])
-                            } else {
-                                res.json(results)
-                            }
+                    var requestify = require('requestify');
+                    console.log(a)
+                    requestify.get(a)
+                        .then(function(response) {
+                            let data = response.data
+                            console.log(data)
+                            // Get the response body (JSON parsed or jQuery object for XMLs)
+                            let r = data.map((torrent) => {
+                                return {
+                                    name: torrent.filename,
+                                    magnet: torrent.download,
+                                    seeds: 0,
+                                    leechs: 0
+                                }
+                            })
+                            res.json(r)
                         })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                    })
+                })
             })

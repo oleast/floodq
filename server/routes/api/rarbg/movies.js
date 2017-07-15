@@ -8,17 +8,24 @@ module.exports = require('express')
                 .then(a => {
                     axios.get(a)
                         .then((b) => {
-                            console.log(a)
-                            let results = b.data.torrent_results
-                            console.log(results)
-                            if (!results) {
+                            let data = b.data.torrent_results
+                            if (!data) {
                                 res.json([])
                             } else {
-                                res.json(results)
+                                data.map((torrent => {
+                                    return {
+                                        manget: torrent.download,
+                                        name: torrent.filename,
+                                        seeds: 0,
+                                        leechs: 0
+                                    }
+                                }))
+                                res.json(data)
                             }
                         })
                         .catch((err) => {
                             console.log(err)
+                            res.json([])
                         })
                     })
             })
