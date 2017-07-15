@@ -64,22 +64,27 @@ export default class Result extends Component {
                         <Grid.Column width={1}>
                         </Grid.Column>
                         <Grid.Column width={2}>
-                            <Button disabled circular size='large'>{ this.props.result.size }</Button>
+                            <Button floated='right' disabled circular size='large'>{ this.props.result.size }</Button>
                         </Grid.Column>
                         <Grid.Column width={2}>
-                            <Button disabled basic circular size='large' color='green'> { this.props.result.seeders } </Button>
+                            <Button floated='right' disabled basic circular size='large' color='green'> { this.props.result.seeders } </Button>
                         </Grid.Column>
                         <Grid.Column width={1}>
-                            <Button disabled basic circular size='large' color='red'> { this.props.result.leechers } </Button>
+                            <Button floated='right' disabled basic circular size='large' color='red'> { this.props.result.leechers } </Button>
                         </Grid.Column>
                         <Grid.Column width={1}>
                             <a href={this.props.result.magnet}>
-                                <Icon name='linkify' fitted circular size='large' />
+                                <Icon floated='right' name='linkify' fitted circular size='large' />
                             </a>
                         </Grid.Column>
-                        <Grid.Column width={1}>
-                            <Icon name='expand' fitted circular size='large' onClick={ this.toggleExtra }/>
-                        </Grid.Column>
+                        { this.state.extra ?
+                            <Grid.Column width={1}>
+                                <Icon floated='right' name='expand' color='blue' fitted circular size='large' onClick={ this.toggleExtra }/>
+                            </Grid.Column> :
+                            <Grid.Column width={1}>
+                                <Icon floated='right' name='expand' fitted circular size='large' onClick={ this.toggleExtra }/>
+                            </Grid.Column>
+                        }
                     </Grid.Row>
                     <Grid.Row columns={1} verticalAlign='middle' only='mobile tablet'>
                         <Grid.Column width={16}>
@@ -93,10 +98,10 @@ export default class Result extends Component {
                             <Button disabled circular size='large'>{ this.props.result.size }</Button>
                         </Grid.Column>
                         <Grid.Column width={3}>
-                            <Button disabled basic circular size='large' color='green'> { this.props.result.seeders } </Button>
+                            <Button float='right' disabled basic circular size='large' color='green'> { this.props.result.seeders } </Button>
                         </Grid.Column>
                         <Grid.Column width={3}>
-                            <Button disabled basic circular size='large' color='red'> { this.props.result.leechers } </Button>
+                            <Button float='right' disabled basic circular size='large' color='red'> { this.props.result.leechers } </Button>
                         </Grid.Column>
                         <Grid.Column width={2}>
                             <a href={this.props.result.magnet}>
@@ -105,16 +110,16 @@ export default class Result extends Component {
                         </Grid.Column>
                         { this.state.extra ?
                             <Grid.Column width={2}>
-                                <Icon name='expand' color='blue' fitted circular size='large' onClick={ this.toggleExtra }/>
+                                <Icon float='right' name='expand' color='blue' fitted circular size='large' onClick={ this.toggleExtra }/>
                             </Grid.Column> :
                             <Grid.Column width={2}>
-                                <Icon name='expand' fitted circular size='large' onClick={ this.toggleExtra }/>
+                                <Icon float='right' name='expand' fitted circular size='large' onClick={ this.toggleExtra }/>
                             </Grid.Column>
                         }
                     </Grid.Row>
                 </Grid>
                 { this.state.extra ?
-                    this.state.extraInfo.size ?
+                    this.state.extraInfo.size.length || this.state.extraInfo.files.length || this.state.extraInfo.date.length ?
                         <div>
                             <p>Texted Language: { this.state.extraInfo.texted_language }</p>
                             <p>Spoken Language: { this.state.extraInfo.spoken_language }</p>

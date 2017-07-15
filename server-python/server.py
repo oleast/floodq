@@ -5,12 +5,36 @@ from bs4 import BeautifulSoup
 from flask import Flask, send_from_directory, current_app, request, render_template
 from nocache import nocache
 import json
+import math
 
 app = Flask(__name__,  static_url_path='/public/')
 
 TPB_URL = 'https://thepiratebay.org'
 
 app.config['RESULT_STATIC_PATH'] = "public/"
+
+def extract_content_col(key, value):
+    if (key == "Type:"):
+        return "type", "TV Show"
+    elif (key == "Files:"):
+        return "files", value.contents[0].contents[0]
+    elif (key == "Size:"):
+        return "size", value.contents[0].split('(')[1].replace('Bytes)', '')[:-1]
+    elif (key == "Info:"):
+        #print(value)
+        return "imdb", value.contents[0]['href']
+    elif (key == "Spoken language(s):"):
+        return "spoken_language", value.contents[0]
+    elif (key == "Texted language(s):"):
+        return "texted_language", value.contents[0]
+    elif (key == "Tag(s):"):
+        print(value)
+        return "tags", list(map(lambda a: a.contents[0], value.find_all('a')))
+    elif (key == "Uploaded:"):
+        return "date", value.contents[0].contents[0]
+    else:
+        return "garbage", "garbage"
+
 
 # Takes in query
 # Returns BeautifulSoup object
@@ -93,23 +117,30 @@ def api_tpb_torrent():
     if (not details):
         return []
 
-    print(details)
+    #print(details)
+    info = {}
 
-    col1 = details.find(class_='col1').find_all('dd')
-    col2 = details.find(class_='col2').find_all('dd')
+    col1 = details.find(class_='col1')
+    for e in col1.findAll('br'):
+        e.extract()
 
-    if (col2):
-        date = col2[0].contents[0]
-    else:
-        date = 'unknown'
+    contents = list(filter(lambda x: x != '\n', col1.contents))
+    contents = list(filter(lambda x: x != ' ', contents))
 
-    return_data = {
-        "description": details.find('pre').contents[0],
-        "files": col1[1].find('a').contents[0],
-        "size": col1[2].contents[0].split('(')[1].replace('Bytes)', '')[:-1],
-        "spoken_language" : col1[3].contents[0],
-        "texted_language" : col1[4].contents[0],
-        "date": date,
-    }
+    #print(contents)
+
+    for i in range(0, int(math.floor(len(contents)/2)), 2):
+        #print(i)
+        #print(contents[i])
+        key = contents[i].contents[0]
+        #print(key)
+        #print(contents[i+1])
+        value = contents[i+1]
+        #print(value)
+
+        e_key, e_value = extract_content_col(key, value)
+        info[e_key] = e_value
     
-    return json.dumps(return_data)
+    print(info)
+    
+    return json.dumps(info)

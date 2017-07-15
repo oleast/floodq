@@ -95,7 +95,7 @@ export default class Body extends Component {
         return (
             <div>
                 <Input
-                    placeholder='Search...B'
+                    placeholder='Search...'
                     onChange={this.formChange}
                     size='large'
                     fluid
