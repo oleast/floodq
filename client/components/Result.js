@@ -124,7 +124,7 @@ export default class Result extends Component {
                             <p>Texted Language: { this.state.extraInfo.texted_language }</p>
                             <p>Spoken Language: { this.state.extraInfo.spoken_language }</p>
                             <p>Size (bytes): { this.state.extraInfo.size }</p>
-                            <p>Date: { this.state.extraInfo.date }</p>
+                            <p>Date: { this.props.result.time } -:- { this.state.extraInfo.date }</p>
                             <p>User: { this.props.result.user } : { this.props.result.user_status }</p>
                             <p>{ this.props.description }</p>
                         </div> :

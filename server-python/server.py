@@ -11,9 +11,14 @@ app = Flask(__name__,  static_url_path='/public/')
 
 TPB_URL = 'https://thepiratebay.org'
 
+RARBG_URL = 'https://rarbgmirror.com'
+RARBG_EXTRA = '/torrents.php?search='
+RARBG_EXTRA2 = '&category[]=18&category[]=41&category[]=49'
+
 app.config['RESULT_STATIC_PATH'] = "public/"
 
 def extract_content_col(key, value):
+    print(key)
     if (key == "Type:"):
         return "type", "TV Show"
     elif (key == "Files:"):
@@ -31,6 +36,7 @@ def extract_content_col(key, value):
         print(value)
         return "tags", list(map(lambda a: a.contents[0], value.find_all('a')))
     elif (key == "Uploaded:"):
+        print(value)
         return "date", value.contents[0].contents[0]
     else:
         return "garbage", "garbage"
@@ -65,14 +71,29 @@ def get_index():
 def get_bundle():
     return send_from_directory('templates', 'bundle.js')
 
+@app.route("/api/rarbg/search")
+def api_rarbg_movies():
+    rarbg_search = RARBG_URL + RARBG_EXTRA + request.args.get('query') + RARBG_EXTRA2
+    print(rarbg_search)
+    req = urllib.request.Request(rarbg_search, headers={'User-Agent' : "Magic Browser"})
+    search = bytes.decode(urllib.request.urlopen(req).read())
+    parsed_search = BeautifulSoup(search, 'lxml')
+
+    #torrents = parsed_search.find_all(class_='lista2')
+
+    print(parsed_search)
+
 @app.route("/api/tpb/search")
 def api_tpb_movies():
-    req = urllib.request.Request(TPB_URL + '/search/' + request.args.get('query') + '/0/99/0', headers={'User-Agent' : "Magic Browser"})
+    tpb_search = TPB_URL + '/search/' + request.args.get('query') + '/0/99/0'
+    print(tpb_search)
+    req = urllib.request.Request(tpb_search, headers={'User-Agent' : "Magic Browser"})
     search = bytes.decode(urllib.request.urlopen(req).read())
     parsed_search = BeautifulSoup(search, 'lxml')
 
     if (not parsed_search.find('table')):
-        return []
+        print("couldn't find anything")
+        return json.dumps([])
 
     rows = parsed_search.find('table').find_all('tr')
     rows.pop(0)
@@ -108,14 +129,17 @@ def api_tpb_movies():
 
 @app.route("/api/tpb/torrent")
 def api_tpb_torrent():
-    req = urllib.request.Request(TPB_URL + '/torrent/' + request.args.get('query'), headers={'User-Agent' : "Magic Browser"})
+    tpb_torrent_search = TPB_URL + '/torrent/' + request.args.get('query')
+    print(tpb_torrent_search)
+    req = urllib.request.Request(tpb_torrent_search, headers={'User-Agent' : "Magic Browser"})
     search = bytes.decode(urllib.request.urlopen(req).read())
     parsed_search = BeautifulSoup(search, 'lxml')
 
     details = parsed_search.find(id='details')
 
     if (not details):
-        return []
+        print("couldn't find anything")
+        return json.dumps([])
 
     #print(details)
     info = {}
